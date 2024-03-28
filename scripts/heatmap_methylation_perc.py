@@ -63,7 +63,7 @@ new_data, WL_data1,WL_data2,WL_data3,WL_data4,WL_data5,WL_data6,position = [],[]
 # show only those where WL_1 or WL_4 is >= 1
 x_labels_more = []
 for i in range(0,len(WL_data[0])):
-    if WL_data[0][i] >= 1 or WL_data[3][i] >= 1:
+    if WL_data[0][i] >= 1 or WL_data[3][i] >= 1 or WL_data[1][i] >= 1 or WL_data[2][i] >= 1 or WL_data[4][i] >= 1 or WL_data[5][i] >= 1:
         WL_data1.append(WL_data[0][i])
         WL_data2.append(WL_data[1][i])
         WL_data3.append(WL_data[2][i])
@@ -72,11 +72,17 @@ for i in range(0,len(WL_data[0])):
         WL_data6.append(WL_data[5][i])
         position.append(WL_pos[0][i])
         j = WL_pos[0][i]
+        # print(">" + str(j) + "_" + WL_ori[0][i])
         if WL_ori[0][i] == '+':
+            # print(ref_seq[j-6:j+5])
             label = str(ref_seq[j-6:j-1]) + "$\\bf{" + str(ref_seq[j-1]) +  "}$" + str(ref_seq[j:j+5])
         else:
+            # print(rc(ref_seq[j-6:j+5]))
             label = str(rc(ref_seq[j:j+5])) + "$\\bf{" + str(rc(ref_seq[j-1])) + "}$" + str(rc(ref_seq[j-6:j-1]))
-        x_labels_more.append(str(j) + " " + str(WL_ori[0][i]) + " " + label)
+        if j < 100:
+            x_labels_more.append(" " + str(j) + " " + str(WL_ori[0][i]) + " " + label)
+        else:
+            x_labels_more.append(str(j) + " " + str(WL_ori[0][i]) + " " + label)
 
 # only show those where at least one entry is non-zero
 # for i in range(0,len(WL_data[0])):
@@ -93,9 +99,15 @@ for i in range(0,len(WL_data[0])):
 data_np = np.array([WL_data4,WL_data1,WL_data2,WL_data3,WL_data5,WL_data6])
 
 
-fig = plt.figure(figsize=(12, 10))
+# fig = plt.figure()
+fig = plt.figure(figsize=(12, 12))
 plt.rcParams['font.family'] = 'monospace'
-sns.heatmap(data_np, xticklabels=x_labels_more,yticklabels=["4","1","3","2","5","6"],cmap=sns.color_palette("OrRd", as_cmap=True))
+ax = sns.heatmap(data_np.T, yticklabels=x_labels_more,xticklabels=["4","1","3","2","5","6"],cmap=sns.color_palette("OrRd", as_cmap=True),cbar_kws = dict(use_gridspec=False,location="left"))
 plt.title( "Methylation percentage" )
-plt.tight_layout()
-plt.savefig("../results/Figure_4_v10.png")
+ax.invert_xaxis()
+ax.invert_yaxis()
+ax.tick_params(right=True, left=False,labelright=True, labelleft=False,labelrotation=0)
+# plt.tight_layout()
+plt.savefig("../results/Figure_4_v13.png",bbox_inches='tight')
+
+
